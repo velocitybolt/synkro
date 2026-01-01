@@ -1,0 +1,45 @@
+"""
+OpenAI Basic Example - Dataset Generation
+==========================================
+
+Generate SFT datasets using OpenAI models:
+- GPT-5-mini for fast generation
+- GPT-4o for quality grading
+
+Requires: OPENAI_API_KEY environment variable
+"""
+
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(env_path)
+
+from synkro.pipelines import create_pipeline
+from synkro.models.openai import OpenAI
+from synkro.types import DatasetType
+from synkro.examples import EXPENSE_POLICY
+
+# Create pipeline with OpenAI models
+# - model: Used for scenario and response generation
+# - grading_model: Used for quality grading (stronger = better filtering)
+pipeline = create_pipeline(
+    model=OpenAI.GPT_4O_MINI,           # Fast, cost-effective generation
+    grading_model=OpenAI.GPT_4O,        # High-quality grading
+    dataset_type=DatasetType.SFT,       # Chat format for fine-tuning
+    max_iterations=3,                   # Max refinement attempts per trace
+)
+
+# Generate dataset from policy
+dataset = pipeline.generate(EXPENSE_POLICY, traces=20)
+
+# Filter to only passing traces
+passing = dataset.filter(passed=True)
+
+# Save to JSONL file
+passing.save("openai_sft.jsonl")
+
+# View summary
+print(passing.summary())
+
