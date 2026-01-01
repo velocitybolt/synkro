@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "synkro"
+version = "0.3.2"
+description = "Generate training datasets from any document"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Murtaza Meerza" }
+]
+keywords = [
+    "llm",
+    "fine-tuning",
+    "training-data",
+    "dataset-generation",
+    "synthetic-data",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "litellm>=1.40",
+    "pydantic>=2.0",
+    "rich>=13.0",
+    "marker-pdf>=0.2",
+    "httpx>=0.25",
+    "beautifulsoup4>=4.12",
+    "html2text>=2020.1",
+    "mammoth>=1.6",
+    "typer>=0.9",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+synkro = "synkro.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["synkro"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"synkro/examples" = "examples"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
